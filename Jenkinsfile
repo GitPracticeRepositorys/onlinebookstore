@@ -1,11 +1,21 @@
-pipeline {  
-    agent any  
-        stages {  
-       	    stage("git_checkout") {  
-           	    steps {  
-              	    echo "cloning repository" 
-              	    echo "repo cloned successfully"  
-              	    }  
-         	    } 
-        }
+pipeline {
+  agent {
+    label 'ansible'
+  }
+  stages {
+    stage('Build') {
+      steps {
+        sh 'mvn clean package'
+      }
+    }
+    stage('Deploy') {
+      steps {
+        ansiblePlaybook(
+          playbook: '/path/to/ansible/deploy.yml',
+          inventory: '/path/to/ansible/hosts',
+          extras: '-e "app_version=target/onlinebookstore-1.0.0.jar"'
+        )
+      }
+    }
+  }
 }
