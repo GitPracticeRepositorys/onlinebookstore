@@ -1,32 +1,38 @@
----
+
+    ---
 - hosts: onlinebookstore
   become: true
-  vars:
-    tomcat_user: "{{ ansible_env.USER }}"
-    app_path: "/var/lib/tomcat/webapps/onlinebookstore"
-    jar_file: "target/onlinebookstore-1.0.0.jar"
-    webapp_runner: "target/dependency/webapp-runner.jar"
   tasks:
-    - name: Create webapps directory
+    - name: Create webapps directory for Tomcat
+      become: true
       file:
-        path: "{{ app_path }}"
+        path: "/opt/tomcat/webapps"
         state: directory
-        owner: "{{ tomcat_user }}"
-        group: "{{ tomcat_user }}"
         mode: '0755'
 
     - name: Copy JAR file to Tomcat webapps directory
+      become: true
       copy:
-        src: "{{ jar_file }}"
-        dest: "{{ app_path }}/"
-        owner: "{{ tomcat_user }}"
-        group: "{{ tomcat_user }}"
+        src: "target/onlinebookstore-1.0.0.jar"
+        dest: "/opt/tomcat/webapps/onlinebookstore.jar"
         mode: '0644'
 
     - name: Copy webapp-runner JAR to Tomcat lib directory
+      become: true
       copy:
-        src: "{{ webapp_runner }}"
-        dest: "/usr
+        src: "target/dependency/webapp-runner.jar"
+        dest: "/opt/tomcat/lib/webapp-runner.jar"
+        mode: '0644'
 
+    - name: Stop Tomcat service
+      become: true
+      service:
+        name: "tomcat"
+        state: stopped
 
-    
+    - name: Start Tomcat service
+      become: true
+      service:
+        name: "tomcat"
+        state: started
+
