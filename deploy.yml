@@ -1,28 +1,32 @@
-- name: Install and deploy onlinebookstore to Tomcat
-  hosts: onlinebookstore
-  become: yes
+---
+- hosts: onlinebookstore
+  become: true
   vars:
-    app_version: "{{ app_version }}"
+    tomcat_user: "{{ ansible_env.USER }}"
+    app_path: "/var/lib/tomcat/webapps/onlinebookstore"
+    jar_file: "target/onlinebookstore-1.0.0.jar"
+    webapp_runner: "target/dependency/webapp-runner.jar"
   tasks:
-    - name: Install Tomcat
-      apt:
-        name: tomcat9
-        state: present
+    - name: Create webapps directory
+      file:
+        path: "{{ app_path }}"
+        state: directory
+        owner: "{{ tomcat_user }}"
+        group: "{{ tomcat_user }}"
+        mode: '0755'
 
     - name: Copy JAR file to Tomcat webapps directory
       copy:
-        src: "{{ app_version }}"
-        dest: /var/lib/tomcat9/webapps/onlinebookstore.war
-        remote_src: yes
-        owner: tomcat
-        group: tomcat
+        src: "{{ jar_file }}"
+        dest: "{{ app_path }}/"
+        owner: "{{ tomcat_user }}"
+        group: "{{ tomcat_user }}"
+        mode: '0644'
 
-    - name: Stop Tomcat
-      systemd:
-        name: tomcat9
-        state: stopped
+    - name: Copy webapp-runner JAR to Tomcat lib directory
+      copy:
+        src: "{{ webapp_runner }}"
+        dest: "/usr
 
-    - name: Start Tomcat
-      systemd:
-        name: tomcat9
-        state: started
+
+    
