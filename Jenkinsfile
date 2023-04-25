@@ -13,7 +13,7 @@ pipeline {
       steps {
         ansiblePlaybook(
           playbook: 'deploy.yml',
-          inventory: '/path/to/ansible/hosts',
+          inventory: 'hosts',
           extras: '-e "app_version=target/onlinebookstore-1.0.0.jar"'
         )
       }
