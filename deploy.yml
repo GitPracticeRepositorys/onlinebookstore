@@ -1,0 +1,28 @@
+- name: Install and deploy onlinebookstore to Tomcat
+  hosts: onlinebookstore
+  become: yes
+  vars:
+    app_version: "{{ app_version }}"
+  tasks:
+    - name: Install Tomcat
+      apt:
+        name: tomcat9
+        state: present
+
+    - name: Copy JAR file to Tomcat webapps directory
+      copy:
+        src: "{{ app_version }}"
+        dest: /var/lib/tomcat9/webapps/onlinebookstore.war
+        remote_src: yes
+        owner: tomcat
+        group: tomcat
+
+    - name: Stop Tomcat
+      systemd:
+        name: tomcat9
+        state: stopped
+
+    - name: Start Tomcat
+      systemd:
+        name: tomcat9
+        state: started
