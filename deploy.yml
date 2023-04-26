@@ -1,38 +1,41 @@
-
----
-- hosts: onlinebookstore
+- name: Deploy onlinebookstore application to Tomcat
+  hosts: onlinebookstore
   become: true
   tasks:
-    - name: Create webapps directory for Tomcat
-      become: true
-      file:
-        path: "/opt/tomcat/webapps"
-        state: directory
-        mode: '0755'
+    - name: Install Java
+      apt:
+        name: openjdk-11-jdk
+        state: present
 
-    - name: Copy JAR file to Tomcat webapps directory
-      become: true
+    - name: Install Tomcat
+      apt:
+        name: tomcat9
+        state: present
+
+    - name: Clone onlinebookstore Git repository
+      git:
+        repo: https://github.com/GitPracticeRepositorys/onlinebookstore.git
+        dest: /opt/onlinebookstore
+        version: master
+
+    - name: Install Maven
+      apt:
+        name: maven
+        state: present
+
+    - name: Build onlinebookstore application
+      shell: mvn clean package -DskipTests
+      args:
+        chdir: /opt/onlinebookstore
+
+    - name: Copy WAR file to Tomcat webapps directory
       copy:
-        src: "target/onlinebookstore-1.0.0.jar"
-        dest: "/opt/tomcat/webapps/onlinebookstore.jar"
-        mode: '0644'
+        src: /opt/onlinebookstore/target/onlinebookstore-1.0.0.war
+        dest: /var/lib/tomcat8/webapps/onlinebookstore.war
 
-    - name: Copy webapp-runner JAR to Tomcat lib directory
-      become: true
-      copy:
-        src: "target/dependency/webapp-runner.jar"
-        dest: "/opt/tomcat/lib/webapp-runner.jar"
-        mode: '0644'
-
-    - name: Stop Tomcat service
-      become: true
+    - name: Restart Tomcat service
       service:
-        name: "tomcat"
-        state: stopped
+        name: tomcat9
+        state: restarted
 
-    - name: Start Tomcat service
-      become: true
-      service:
-        name: "tomcat"
-        state: started
 
