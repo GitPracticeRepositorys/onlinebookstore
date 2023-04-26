@@ -1,6 +1,6 @@
 ---
 - name: Deploy onlinebookstore application to Tomcat
-  hosts: tomcat
+  hosts: all
   become: true
   tasks:
     - name: Install Tomcat
