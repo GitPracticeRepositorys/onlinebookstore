@@ -1,6 +1,6 @@
 ---
 - name: Deploy onlinebookstore application to Tomcat
-  hosts: onlinebookstore
+  hosts: webserver
   become: true
   tasks:
     - name: Install Tomcat
@@ -10,10 +10,11 @@
 
     - name: Copy WAR file to Tomcat webapps directory
       copy:
-        src: /opt/onlinebookstore/target/onlinebookstore-1.0.0.war
+        src: /home/jenkins/jenkins_root/workspace/bookstore/target/dependency/webapp-runner.jar
         dest: /var/lib/tomcat9/webapps/onlinebookstore.war
 
     - name: Restart Tomcat service
       service:
         name: tomcat9
         state: restarted
+
