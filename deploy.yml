@@ -2,6 +2,11 @@
 - name: Deploy onlinebookstore application to Tomcat
   hosts: webserver
   become: true
+  vars:
+    war_file_path: /home/jenkins/jenkins_root/workspace/bookstore/target/dependency/webapp-runner.jar
+    webapps_dir: /var/lib/tomcat9/webapps/
+    app_name: onlinebookstore
+
   tasks:
     - name: Install Tomcat
       apt:
@@ -10,8 +15,8 @@
 
     - name: Copy WAR file to Tomcat webapps directory
       copy:
-        src: /home/jenkins/jenkins_root/workspace/bookstore/target/dependency/webapp-runner.jar
-        dest: /var/lib/tomcat9/webapps/onlinebookstore.war
+        src: "{{ war_file_path }}"
+        dest: "{{ webapps_dir }}{{ app_name }}.war"
 
     - name: Restart Tomcat service
       service:
