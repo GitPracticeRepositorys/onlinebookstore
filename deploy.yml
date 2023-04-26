@@ -13,7 +13,7 @@
         src: /home/jenkins/jenkins_root/workspace/bookstore/target/dependency/webapp-runner.jar
         dest: /var/lib/tomcat9/webapps/ROOT.war
       notify: Restart Tomcat service
-
+      mode: '0755'
     - name: Ensure Tomcat manager app is installed
       apt:
         name: tomcat9-admin
