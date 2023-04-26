@@ -1,6 +1,6 @@
 ---
 - name: Deploy onlinebookstore application to Tomcat
-  hosts: your_server_hostname
+  hosts: tomcat
   become: true
   tasks:
     - name: Install Tomcat
@@ -12,28 +12,23 @@
       copy:
         src: /home/jenkins/jenkins_root/workspace/bookstore/target/dependency/webapp-runner.jar
         dest: /var/lib/tomcat9/webapps/ROOT.war
+      notify: Restart Tomcat service
+
+    - name: Ensure Tomcat manager app is installed
+      apt:
+        name: tomcat9-admin
+        state: present
+
+    - name: Add manager role to Tomcat users
+      lineinfile:
+        dest: /etc/tomcat9/tomcat-users.xml
+        regexp: '.*<user username="admin" password=".+" roles="manager-gui"/>'
+        line: '<user username="admin" password="admin" roles="manager-gui, manager-script"/>'
 
     - name: Restart Tomcat service
       service:
         name: tomcat9
         state: restarted
 
-    - name: Configure Tomcat Manager
-      lineinfile:
-        path: /etc/tomcat9/tomcat-users.xml
-        regexp: "<\/tomcat-users>"
-        line: |
-          <role rolename="manager-gui"/>
-          <role rolename="manager-script"/>
-          <user username="admin" password="admin" roles="manager-gui,manager-script"/>
-
-    - name: Configure Tomcat Host Manager
-      lineinfile:
-        path: /etc/tomcat9/tomcat-users.xml
-        regexp: "<\/tomcat-users>"
-        line: |
-          <role rolename="admin-gui"/>
-          <role rolename="admin-script"/>
-          <user username="admin" password="admin" roles="admin-gui,admin-script"/>
 
 
