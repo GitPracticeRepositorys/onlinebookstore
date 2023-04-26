@@ -1,12 +1,8 @@
+---
 - name: Deploy onlinebookstore application to Tomcat
   hosts: onlinebookstore
   become: true
   tasks:
-    - name: Install Java
-      apt:
-        name: openjdk-11-jdk
-        state: present
-
     - name: Install Tomcat
       apt:
         name: tomcat9
@@ -18,11 +14,6 @@
         dest: /opt/onlinebookstore
         version: master
 
-    - name: Install Maven
-      apt:
-        name: maven
-        state: present
-
     - name: Build onlinebookstore application
       shell: mvn clean package -DskipTests
       args:
@@ -31,11 +22,9 @@
     - name: Copy WAR file to Tomcat webapps directory
       copy:
         src: /opt/onlinebookstore/target/onlinebookstore-1.0.0.war
-        dest: /var/lib/tomcat8/webapps/onlinebookstore.war
+        dest: /var/lib/tomcat9/webapps/onlinebookstore.war
 
     - name: Restart Tomcat service
       service:
         name: tomcat9
         state: restarted
-
-
