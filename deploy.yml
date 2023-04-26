@@ -1,6 +1,6 @@
 ---
 - name: Deploy onlinebookstore application to Tomcat
-  hosts: all
+  hosts: tomcat
   become: true
   tasks:
     - name: Install Tomcat
@@ -14,6 +14,7 @@
         dest: /var/lib/tomcat9/webapps/ROOT.war
       notify: Restart Tomcat service
       mode: '0755'
+
     - name: Ensure Tomcat manager app is installed
       apt:
         name: tomcat9-admin
@@ -25,11 +26,17 @@
         regexp: '.*<user username="admin" password=".+" roles="manager-gui"/>'
         line: '<user username="admin" password="admin" roles="manager-gui, manager-script"/>'
 
+    - name: Restart Tomcat service
+      service:
+        name: tomcat9
+        state: restarted
+
   handlers:
     - name: Restart Tomcat service
       service:
         name: tomcat9
         state: restarted
+
 
 
 
