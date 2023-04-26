@@ -5,7 +5,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh '/opt/mvn clean package'
+        sh '/opt/maven3.6.3/bin maven clean package'
       }
     }
 
