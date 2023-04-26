@@ -8,17 +8,6 @@
         name: tomcat9
         state: present
 
-    - name: Clone onlinebookstore Git repository
-      git:
-        repo: https://github.com/GitPracticeRepositorys/onlinebookstore.git
-        dest: /opt/onlinebookstore
-        version: master
-
-    - name: Build onlinebookstore application
-      shell: mvn clean package -DskipTests
-      args:
-        chdir: /opt/onlinebookstore
-
     - name: Copy WAR file to Tomcat webapps directory
       copy:
         src: /opt/onlinebookstore/target/onlinebookstore-1.0.0.war
