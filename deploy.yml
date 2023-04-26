@@ -25,10 +25,12 @@
         regexp: '.*<user username="admin" password=".+" roles="manager-gui"/>'
         line: '<user username="admin" password="admin" roles="manager-gui, manager-script"/>'
 
+  handlers:
     - name: Restart Tomcat service
       service:
         name: tomcat9
         state: restarted
+
 
 
 
