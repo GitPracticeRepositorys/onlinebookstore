@@ -1,2 +1,4 @@
-[onlinebookstore]
-172.31.26.94
+[webserver]
+172.31.26.94 ansible_ssh_user=jenkins ansible_ssh_pass=jenkins
+
+
